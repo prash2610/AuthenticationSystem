@@ -1,9 +1,13 @@
 package com.authsystem.entity;
 
+import com.authsystem.Role.Role;
+
 // import jakarta.annotation.Generated;
 // import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,7 +38,9 @@ public class User {
     
     private boolean isVerified=false;
 
-    private String role="USER";
+    @Enumerated(EnumType.STRING)
+    private Role role=Role.USER;
     
     private int failedAttempts=0;
+    
 }

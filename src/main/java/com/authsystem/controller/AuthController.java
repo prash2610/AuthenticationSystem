@@ -49,14 +49,13 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public Map<String, String> refresh(@RequestParam String refreshToken, @RequestParam String deviceId) {
-        //TODO: process POST request
-        
         return authService.refreshToken(refreshToken,deviceId);
     }
     
     @PostMapping("/logout")
-    public String logout(@RequestParam String email) {
-        tokenService.deleteRefreshToken(email);
+    public String logout(@RequestParam String email, @RequestParam String deviceId) {
+        String key=email+":"+deviceId;
+        tokenService.deleteRefreshToken(key);
         return "Logged out successfully";
     }
 }

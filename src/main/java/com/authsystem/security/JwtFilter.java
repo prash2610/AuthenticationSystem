@@ -3,9 +3,11 @@ package com.authsystem.security;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties.Apiversion.Use;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -37,16 +39,16 @@ public class JwtFilter extends OncePerRequestFilter {
                 String email = jwtUtil.extractEmail(token);
                 User user = userRepository.findByEmail(email).orElse(null);
                 if (user != null) {
+                    SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + user.getRole().name());
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email,
-                            null, Collections.emptyList());
+                            null, List.of(authority));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     System.out.println("Auth Header: " + authHeader);
-System.out.println("Email from token: " + email);
-System.out.println(SecurityContextHolder.getContext().getAuthentication());
+                    System.out.println("Email from token: " + email);
+                    System.out.println(SecurityContextHolder.getContext().getAuthentication());
                 }
             }
         }
-        
 
         filterChain.doFilter(request, response);
     }

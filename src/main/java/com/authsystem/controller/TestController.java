@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 
 
@@ -36,11 +37,13 @@ public class TestController {
     // }
 
     @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<User> getMethodName() {
         return userRepository.findAll();
     }
     
     @GetMapping("/check")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public String check () {
         return "Working";
     }

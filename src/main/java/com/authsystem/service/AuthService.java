@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.authsystem.Role.Role;
 import com.authsystem.dto.LoginRequest;
 import com.authsystem.dto.RequestRegister;
 import com.authsystem.entity.User;
@@ -30,7 +31,7 @@ public class AuthService {
 
         String hashedPassword=passwordEncoder.encode(requestRegister.getPassword());
 
-        User user=User.builder().email(requestRegister.getEmail()).password(hashedPassword).build();
+        User user=User.builder().email(requestRegister.getEmail()).password(hashedPassword).role(Role.USER).build();
         userRepository.save(user);
 
         return "User registered successfully";
@@ -41,7 +42,7 @@ public class AuthService {
         .orElseThrow(()->new RuntimeException("User not found"));
 
         if(!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())){
-            throw new RuntimeException("Invaid credentials");
+            throw new RuntimeException("Invalid credentials");
         }
 
         String deviceId=UUID.randomUUID().toString();
@@ -69,7 +70,8 @@ public class AuthService {
         }
 
         if( !storedToken.equals(refreshToken)){
-            tokenService.deleteAllUserTokens(email);
+            // tokenService.deleteAllUserTokens(email);
+            tokenService.deleteRefreshToken(email+":"+deviceId);
             throw new RuntimeException("Possible token theft detected");
         }
 

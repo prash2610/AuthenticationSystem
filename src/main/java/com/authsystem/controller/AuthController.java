@@ -10,14 +10,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.authsystem.dto.LoginRequest;
 import com.authsystem.dto.RequestRegister;
 import com.authsystem.service.AuthService;
+import com.authsystem.service.EmailService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+
 
 
 // @SecurityScheme(
@@ -34,12 +36,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class AuthController {
     private final TokenService tokenService;
     private final AuthService authService;
+    private final EmailService emailService;
+
 
     @PostMapping("/register")   
     public String register(@Valid @RequestBody RequestRegister requestRegister) {
 
         return authService.register(requestRegister);
     }
+
+    @GetMapping("/verify")
+    public String verifyEmail(@RequestParam String token) {
+        emailService.verifyEmail(token);
+        return "Email verified successfully";
+    }
+    
 
     @Operation(summary = "User login", description = "Authenticates user and returns access & refresh tokens")
     @PostMapping("/login")
